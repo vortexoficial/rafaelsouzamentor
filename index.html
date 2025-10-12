@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LA VACA NEGRA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="img/favicon.png" type="image/png">
+
+  <style>
+    /* ===================== BANNERS ===================== */
+    body {
+      background-color: #000000;
+    }
+
+    .banners a img {
+      display: block;
+      margin-bottom: 10px;
+      width: 100%;
+      height: auto;
+    }
+
+    .desktop-banner { display: block; }
+    .mobile-banner { display: none; }
+
+    @media (max-width: 768px) {
+      .desktop-banner { display: none; }
+      .mobile-banner { display: block; }
+    }
+
+    /* ===================== LOADER ===================== */
+    :root{
+      --logo-size: 200px;
+      --bar-extra: 0px;
+      --bar-height: 6px;
+      --bar-color: #d6a15b;
+    }
+
+    .loader-wrap{
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      background: #000000;
+    }
+
+    .loader-inner{
+      text-align: center;
+      width: fit-content;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .loader-logo img{
+      width: var(--logo-size);
+      height: var(--logo-size);
+      object-fit: contain;
+      animation: fadeIn .8s ease-out forwards;
+    }
+
+    .loader-bar{
+      position: relative;
+      width: calc(var(--logo-size) + var(--bar-extra));
+      height: var(--bar-height);
+      margin: 8px auto 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,.15);
+      overflow: hidden;
+    }
+
+    .loader-fill{
+      position: absolute;
+      inset: 0;
+      background: var(--bar-color);
+      transform-origin: left;
+      transform: scaleX(0);
+      animation: fillLtoR 2.5s ease-in-out forwards;
+    }
+
+    .loader-text{
+      margin-top: 10px;
+      color: rgba(255,255,255,.85);
+      animation: fadeIn .8s ease-out forwards;
+    }
+
+    body.loading > *:not(#loader){ display: none; }
+
+    @keyframes fillLtoR{
+      to{ transform: scaleX(1); }
+    }
+
+    @keyframes fadeIn{
+      from{ opacity: 0; transform: translateY(6px); }
+      to{ opacity: 1; transform: translateY(0); }
+    }
+
+    .loader-wrap.fade-out{
+      opacity: 0;
+      transition: opacity .4s ease;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body class="loading">
+  <!-- ========== LOADER ========== -->
+  <div id="loader" class="loader-wrap">
+    <div class="loader-inner">
+      <div class="loader-logo">
+        <img src="img/logo.png" alt="Logo La Vaca Negra" />
+      </div>
+      <div class="loader-bar">
+        <span class="loader-fill"></span>
+      </div>
+      <p class="loader-text">Carregando...</p>
+    </div>
+  </div>
+  <!-- ========== FIM LOADER ========== -->
+
+  <!-- ========== CONTEÚDO PRINCIPAL ========== -->
+  <div class="hero">
+    <div class="logo-container">
+      <img src="img/logo.png" alt="Logo" class="logo" />
+      <br><br>
+      <div class="social-icons">
+        <a href="https://www.instagram.com/rafaelsouzaomentor/"><img src="img/instagram.png" alt="Instagram" /></a>
+        <a href="https://www.instagram.com/rafaelsouzaomentor"><img src="img/linkedin.png" alt="LinkedIn" /></a>
+        <a href="https://wa.me/5511981411717"><img src="img/whatsapp.png" alt="WhatsApp" /></a>
+      </div>
+    </div>
+    <div class="arrow"><font size="3">Clique e acesse ↓</font></div>
+  </div>
+
+  <!-- ========== BANNERS ========== -->
+  <div class="banners">
+    <!-- Versão Desktop -->
+    <a href="https://wa.me/5513974079229?text=Ol%C3%A1!%20Quero%20ir%20para%20o%20topo%20com%20Rafa%C3%A9l%20Souza!
+" class="desktop-banner"><img src="img/banner.png" alt="Banner 1" /></a>
+    <a href="https://wa.me/5513974079229?text=Ol%C3%A1!%20Quero%20decolar%20com%20a%20mentoria%20com%20o%20Rafa!%F0%9F%9A%80
+" class="desktop-banner"><img src="img/banner2.png" alt="Banner 2" /></a>
+   <img src="img/banner3.png" alt="Banner 3" />
+   <img src="img/banner4.png" alt="Banner 4" />
+
+    <!-- Versão Mobile -->
+    <a href="https://wa.me/5513974079229?text=Ol%C3%A1!%20Quero%20ir%20para%20o%20topo%20com%20Rafa%C3%A9l%20Souza!
+" class="mobile-banner"><img src="img/banner1.png" alt="Banner 1 Mobile" /></a>
+    <a href="https://wa.me/5513974079229?text=Ol%C3%A1!%20Quero%20decolar%20com%20a%20mentoria%20com%20o%20Rafa!%F0%9F%9A%80
+" class="mobile-banner"><img src="img/banner22.png" alt="Banner 2 Mobile" /></a>
+    <img src="img/banner33.png" alt="Banner 3 Mobile" />
+   <img src="img/banner44.png" alt="Banner 4 Mobile" />
+  </div>
+
+  <footer>
+    © Copyright 2025 LA VACA NEGRA. Todos os direitos reservados. <br />
+  </footer>
+
+  <script>
+    const LOADER_TIMEOUT = 2500;
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loader');
+      setTimeout(() => {
+        loader.classList.add('fade-out');
+        setTimeout(() => {
+          loader.remove();
+          document.body.classList.remove('loading');
+        }, 450);
+      }, LOADER_TIMEOUT);
+    });
+  </script>
+</body>
+</html>
