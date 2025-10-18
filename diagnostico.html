@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anamnese de Vendas - Rafaél Souza Mentor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="img/logo.png" type="image/png">
+
+    <style>
+        /* ===================== CONFIGURAÇÕES GLOBAIS ===================== */
+        :root {
+            --gold: #d6a15b;
+            --black: #000000;
+            --dark-gray: #1a1a1a;
+            --light-gray: #cccccc;
+            --white: #ffffff;
+            --font-main: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--black);
+            font-family: var(--font-main);
+            color: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        /* ===================== LOADER ===================== */
+        .loader-wrap {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            background: var(--black);
+            opacity: 1; /* Garante que o loader está visível no início */
+            transition: opacity .4s ease;
+        }
+
+        .loader-wrap.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-inner {
+            text-align: center;
+            width: fit-content;
+        }
+
+        .loader-logo img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            animation: fadeIn .8s ease-out forwards;
+        }
+
+        .loader-bar {
+            position: relative;
+            width: 200px;
+            height: 6px;
+            margin: 8px auto 0;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .15);
+            overflow: hidden;
+        }
+
+        .loader-fill {
+            position: absolute;
+            inset: 0;
+            background: var(--gold);
+            transform-origin: left;
+            transform: scaleX(0);
+            animation: fillLtoR 2.5s ease-in-out forwards; /* Animação da barra */
+        }
+
+        .loader-text {
+            margin-top: 10px;
+            color: rgba(255, 255, 255, .85);
+            animation: fadeIn .8s ease-out forwards;
+        }
+
+        @keyframes fillLtoR {
+            0% { transform: scaleX(0); }
+            100% { transform: scaleX(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===================== TELAS ===================== */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            border: 1px solid var(--dark-gray);
+            border-radius: 12px;
+            background-color: #0a0a0a;
+            animation: fadeIn .5s ease-out;
+            position: relative;
+        }
+        .screen.active {
+            display: flex;
+        }
+
+        .screen h1 {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .screen h2 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .screen p {
+            font-size: 1rem;
+            color: var(--light-gray);
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Form elements */
+        .form-group {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--dark-gray);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 1rem;
+            font-family: var(--font-main);
+            transition: border-color .3s, box-shadow .3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(214, 161, 91, 0.3);
+        }
+        
+        #end-screen .logo {
+             margin-bottom: 20px;
+             max-width: 150px;
+        }
+
+        /* ===================== BOTÃO DE AÇÃO E ANIMAÇÃO FEIXE DE LUZ ===================== */
+        .cta-button {
+            background-color: var(--gold);
+            color: var(--black);
+            padding: 15px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform .3s, box-shadow .3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(214, 161, 91, 0.7);
+        }
+
+        /* Efeito de feixe de luz */
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -75%; /* Inicia fora do botão à esquerda */
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: skewX(-20deg); /* Inclina o feixe */
+            animation: moveLight 2s infinite; /* Loop infinito */
+            opacity: 0.7;
+        }
+
+        /* Acende o botão no hover */
+        .cta-button:hover::before {
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+            opacity: 1;
+        }
+
+        @keyframes moveLight {
+            0% { left: -75%; }
+            100% { left: 125%; } /* Move para fora do botão à direita */
+        }
+
+
+        /* ===================== TELA DO QUIZ ===================== */
+        #quiz-screen {
+            padding: 25px;
+        }
+
+        #progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: var(--dark-gray);
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--gold);
+            border-radius: 5px;
+            transition: width 0.5s ease-in-out;
+        }
+        
+        #question-content {
+             min-height: 450px; 
+             display: flex;
+             flex-direction: column;
+             justify-content: center;
+        }
+        
+        /* MUDANÇA ESTRUTURAL: Solução definitiva para centralização */
+        .question-wrapper {
+            animation: fadeIn .5s ease-out;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Força todos os filhos a se alinharem no centro */
+        }
+
+        #question-category {
+            color: var(--gold);
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        #question-text {
+            color: var(--white);
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-bottom: 40px;
+            min-height: 80px;
+        }
+
+        #answers-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            width: 100%; /* Garante que os botões usem o espaço disponível */
+        }
+
+        .answer-btn {
+            width: 100%;
+            padding: 20px;
+            background-color: transparent;
+            border: 2px solid var(--dark-gray);
+            border-radius: 8px;
+            color: var(--light-gray);
+            font-size: 1rem;
+            font-family: var(--font-main);
+            text-align: center;
+            cursor: pointer;
+            transition: background-color .3s, border-color .3s, transform .3s;
+        }
+
+        .answer-btn:hover {
+            background-color: var(--dark-gray);
+            border-color: var(--gold);
+            transform: scale(1.02);
+        }
+        
+        #back-btn {
+            align-self: flex-start;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        #back-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--light-gray);
+            transition: fill 0.3s;
+        }
+        
+        #back-btn span {
+            color: var(--light-gray);
+            font-family: var(--font-main);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        #back-btn:hover svg,
+        #back-btn:hover span {
+            color: var(--gold);
+            fill: var(--gold);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .screen h1 { font-size: 2rem; }
+            .screen h2 { font-size: 1.2rem; }
+            #question-text { font-size: 1.2rem; }
+            #quiz-screen { padding-top: 20px; }
+            #back-btn { margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loader" class="loader-wrap">
+        <div class="loader-inner">
+            <div class="loader-logo"><img src="img/logo.png" alt="Logo Rafaél Souza" /></div>
+            <div class="loader-bar"><span class="loader-fill"></span></div>
+            <p class="loader-text">Carregando...</p>
+        </div>
+    </div>
+    <div class="container">
+        <div id="start-screen" class="screen active">
+            <h1>SUA ANAMNESE DE VENDAS</h1>
+            <h2>Diagnóstico Completo</h2>
+            <p>Descubra o nível de maturidade do seu processo comercial. Responda a 35 perguntas rápidas e receba uma análise detalhada sobre seus pontos fortes e oportunidades de melhoria.</p>
+            <div class="form-group"><input type="text" id="user-name" placeholder="Seu nome" required></div>
+            <div class="form-group"><input type="email" id="user-email" placeholder="Seu melhor e-mail" required></div>
+            <div class="form-group"><input type="tel" id="user-whatsapp" placeholder="Seu WhatsApp com DDD" required></div>
+            <button id="start-btn" class="cta-button">Começar Diagnóstico</button>
+        </div>
+        <div id="quiz-screen" class="screen">
+            <button id="back-btn" class="hidden">
+                <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                <span>Voltar</span>
+            </button>
+            <div id="progress-container"><div id="progress-bar"></div></div>
+            <div id="question-content"></div>
+        </div>
+        <div id="end-screen" class="screen">
+            <img src="img/logo.png" alt="Logo Rafaél Souza" class="logo">
+            <h2>Diagnóstico Recebido com Sucesso!</h2>
+            <p>Obrigado por preencher a nossa Anamnese de Vendas. Sua empresa deu o primeiro passo para otimizar a performance comercial.</p>
+            <p>Nossa equipe de especialistas está analisando suas respostas para montar um relatório personalizado. Entraremos em contato em breve para apresentar seus resultados e uma solução customizada.</p>
+            <p style="font-weight: 700; color: white;">Quer acelerar o processo e falar com um especialista agora mesmo?</p>
+            <a href="https://wa.me/5511981411717?text=Ol%C3%A1!%20Acabei%20de%20preencher%20a%20Anamnese%20de%20Vendas%20e%20gostaria%20de%20saber%20meus%20resultados." target="_blank" class="cta-button">Fale com um Especialista no WhatsApp</a>
+        </div>
+    </div>
+    <script>
+        // LÓGICA DO LOADER CORRIGIDA
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            // A animação fillLtoR já está definida para 2.5s.
+            // Apenas definimos um timeout para remover o loader após a animação.
+            setTimeout(() => {
+                loader.classList.add('fade-out');
+                setTimeout(() => {
+                    if (loader) loader.remove();
+                }, 400); // tempo da transição de opacidade do fade-out
+            }, 2500); // Garante que o loader fique visível pelo tempo da animação da barra
+        });
+
+        const quizData = [
+            {category:"1/7 - Estratégia e Estrutura Comercial",question:"Sua empresa possui um processo comercial estruturado?",answers:[{text:"Não, as vendas acontecem de forma intuitiva e reativa.",score:0},{text:"Temos uma ideia de processo, mas não é documentado ou seguido por todos.",score:1},{text:"Sim, temos um processo claro, documentado e seguido pela equipe.",score:2},{text:"Sim, e nosso processo é otimizado constantemente com base em dados.",score:3}]},
+            {category:"1/7 - Estratégia e Estrutura Comercial",question:"Existe uma meta de vendas mensal claramente definida e acompanhada?",answers:[{text:"Não temos metas formais.",score:0},{text:"Temos uma meta geral, mas não a acompanhamos de perto.",score:1},{text:"Sim, temos metas mensais claras e fazemos o acompanhamento.",score:2},{text:"Sim, temos metas individuais e de equipe, com rituais de acompanhamento.",score:3}]},
+            {category:"1/7 - Estratégia e Estrutura Comercial",question:"Quem é responsável por acompanhar os números e indicadores de vendas?",answers:[{text:"Ninguém especificamente, olhamos o faturamento no fim do mês.",score:0},{text:"O próprio dono da empresa olha quando tem tempo.",score:1},{text:"Temos uma pessoa ou gerente responsável por isso.",score:2},{text:"Temos um líder comercial e a própria equipe tem acesso a dashboards.",score:3}]},
+            {category:"1/7 - Estratégia e Estrutura Comercial",question:"Há divisão clara de papéis na equipe de vendas (prospecção, fechamento, etc.)?",answers:[{text:"Não, todo mundo faz de tudo.",score:0},{text:"Tentamos dividir, mas na prática os papéis se misturam.",score:1},{text:"Sim, temos papéis como pré-vendas (SDR) e vendedor (Closer).",score:2},{text:"Sim, os papéis são bem definidos, com metas e comissões específicas.",score:3}]},
+            {category:"1/7 - Estratégia e Estrutura Comercial",question:"Você considera que o time entende o funil de vendas da empresa?",answers:[{text:"Funil de vendas? Não usamos esse conceito.",score:0},{text:"Alguns entendem a ideia, mas não é algo formalizado.",score:1},{text:"Sim, a equipe conhece as etapas do nosso funil de vendas.",score:2},{text:"Sim, e usamos as taxas de conversão de cada etapa para tomar decisões.",score:3}]},
+            {category:"2/7 - Prospecção e Geração de Oportunidades",question:"De onde vêm a maioria das suas novas oportunidades de negócio?",answers:[{text:"Quase 100% de indicações ou do esforço do dono.",score:0},{text:"Indicações e algumas ações pontuais em redes sociais ou eventos.",score:1},{text:"Temos canais consistentes, como marketing de conteúdo e tráfego pago.",score:2},{text:"Temos múltiplos canais, incluindo prospecção ativa estruturada (outbound).",score:3}]},
+            {category:"2/7 - Prospecção e Geração de Oportunidades",question:"Existe um processo claro e contínuo para buscar novos clientes?",answers:[{text:"Não, esperamos os clientes chegarem até nós.",score:0},{text:"Fazemos ações de prospecção apenas quando as vendas estão baixas.",score:1},{text:"Sim, temos uma rotina semanal de prospecção.",score:2},{text:"Sim, a prospecção é uma atividade diária, com metas e ferramentas.",score:3}]},
+            {category:"2/7 - Prospecção e Geração de Oportunidades",question:"Com que frequência sua equipe faz prospecção ativa?",answers:[{text:"Raramente ou nunca.",score:0},{text:"Algumas vezes por mês, sem uma frequência definida.",score:1},{text:"Semanalmente, com horários dedicados para isso.",score:2},{text:"Diariamente, como parte fundamental do processo comercial.",score:3}]},
+            {category:"2/7 - Prospecção e Geração de Oportunidades",question:"Sua empresa possui uma base de contatos (leads) organizada e atualizada?",answers:[{text:"Não temos uma base organizada.",score:0},{text:"Temos uma planilha, mas está desatualizada.",score:1},{text:"Usamos uma planilha ou CRM básico para organizar os contatos.",score:2},{text:"Nosso CRM é a fonte central de inteligência, com leads segmentados.",score:3}]},
+            {category:"2/7 - Prospecção e Geração de Oportunidades",question:"Em uma escala de 1 a 10, o quão previsível é sua geração de leads?",answers:[{text:"1 a 3 (Totalmente imprevisível).",score:0},{text:"4 a 6 (Temos picos e vales, alguma previsibilidade).",score:1},{text:"7 a 8 (Conseguimos prever bem o volume mensal).",score:2},{text:"9 a 10 (Temos total controle e previsibilidade sobre os canais).",score:3}]},
+            {category:"3/7 - Atendimento e Abordagem",question:"Existe um roteiro ou script de abordagem para o primeiro contato com um lead?",answers:[{text:"Não, cada vendedor fala o que acha melhor na hora.",score:0},{text:"Temos algumas ideias, mas nada formalizado.",score:1},{text:"Sim, temos um roteiro com as principais perguntas e pontos a serem abordados.",score:2},{text:"Sim, temos playbooks de vendas flexíveis, adaptáveis para cada perfil de cliente.",score:3}]},
+            {category:"3/7 - Atendimento e Abordagem",question:"A sua abordagem de vendas é mais focada em quê?",answers:[{text:"Em apresentar o produto/serviço e o preço o mais rápido possível.",score:0},{text:"Em falar sobre a empresa e suas qualidades antes de apresentar a solução.",score:1},{text:"Em entender as necessidades do cliente para depois conectar com a solução.",score:2},{text:"Em gerar insights e educar o cliente sobre um problema que ele talvez nem saiba que tem.",score:3}]},
+            {category:"3/7 - Atendimento e Abordagem",question:"O atendimento é padronizado ou depende do estilo de cada vendedor?",answers:[{text:"Totalmente dependente do vendedor, cada um faz de um jeito.",score:0},{text:"Há uma tentativa de padrão, mas a variação ainda é grande.",score:1},{text:"Temos um padrão de qualidade e abordagem que todos seguem.",score:2},{text:"Temos um padrão, mas com espaço para a personalização e melhoria contínua.",score:3}]},
+            {category:"3/7 - Atendimento e Abordagem",question:"Você sente que o cliente percebe valor logo nos primeiros minutos de conversa?",answers:[{text:"Não, geralmente a conversa é fria e focada em preço.",score:0},{text:"Às vezes, depende muito do cliente.",score:1},{text:"Sim, na maioria das vezes conseguimos criar uma boa conexão inicial.",score:2},{text:"Sim, nosso objetivo é gerar um momento 'uau' logo no início da conversa.",score:3}]},
+            {category:"3/7 - Atendimento e Abordagem",question:"Qual é o principal diferencial percebido pelo cliente no seu atendimento?",answers:[{text:"Nosso preço baixo.",score:0},{text:"A agilidade na resposta.",score:1},{text:"O conhecimento técnico e a capacidade de entender o problema dele.",score:2},{text:"Nossa capacidade de atuar como um consultor estratégico para o negócio dele.",score:3}]},
+            {category:"4/7 - Follow-up e Relacionamento",question:"Quando um cliente pede para 'pensar', qual é o procedimento padrão?",answers:[{text:"Esperamos ele entrar em contato de volta.",score:0},{text:"Mandamos uma mensagem depois de alguns dias para ver se ele decidiu.",score:1},{text:"Temos uma cadência definida de contatos (follow-up) com prazos.",score:2},{text:"A cadência é definida e cada contato agrega um novo valor ou informação útil.",score:3}]},
+            {category:"4/7 - Follow-up e Relacionamento",question:"Há uma régua de follow-ups definida (quantas tentativas, intervalos, canais)?",answers:[{text:"Não, é feito de forma aleatória.",score:0},{text:"Tentamos entrar em contato umas 2 ou 3 vezes, sem um padrão.",score:1},{text:"Sim, temos uma regra básica (ex: 5 contatos em 15 dias).",score:2},{text:"Sim, temos fluxos de cadência automatizados e manuais, usando múltiplos canais.",score:3}]},
+            {category:"4/7 - Follow-up e Relacionamento",question:"O time utiliza alguma ferramenta para registrar contatos e históricos?",answers:[{text:"Não, fica tudo na cabeça do vendedor ou em anotações de papel.",score:0},{text:"Usamos planilhas, mas nem sempre são atualizadas.",score:1},{text:"Sim, utilizamos um CRM de forma consistente para registrar tudo.",score:2},{text:"Sim, nosso CRM é integrado a outras ferramentas e gera insights para a equipe.",score:3}]},
+            {category:"4/7 - Follow-up e Relacionamento",question:"Os vendedores mantêm relacionamento ativo com clientes antigos?",answers:[{text:"Não, depois que a venda é feita, o contato acaba.",score:0},{text:"Apenas se o cliente nos procurar novamente.",score:1},{text:"Sim, fazemos contatos periódicos para checar a satisfação.",score:2},{text:"Sim, temos um processo de pós-venda focado em gerar novas vendas e indicações.",score:3}]},
+            {category:"4/7 - Follow-up e Relacionamento",question:"Em média, quantas oportunidades você acredita que são perdidas por falta de acompanhamento?",answers:[{text:"Muitas, com certeza perdemos dinheiro com isso.",score:0},{text:"Algumas, principalmente nos meses mais corridos.",score:1},{text:"Poucas, nosso processo é bem amarrado.",score:2},{text:"Quase nenhuma, temos um sistema que analisa os motivos da perda.",score:3}]},
+            {category:"5/7 - Fechamento e Negociação",question:"Sua equipe utiliza algum método ou técnica de fechamento de vendas?",answers:[{text:"Não, cada um fecha como pode, geralmente na base da intuição.",score:0},{text:"Temos algumas técnicas conhecidas, mas não são padronizadas nem treinadas.",score:1},{text:"Sim, usamos métodos como o fechamento por alternativas ou por urgência.",score:2},{text:"Sim, o método de fechamento é uma consequência natural da abordagem consultiva.",score:3}]},
+            {category:"5/7 - Fechamento e Negociação",question:"Quais são as principais objeções que surgem no momento da venda?",answers:[{text:"Não sei dizer, cada cliente fala uma coisa diferente.",score:0},{text:"A principal e quase única objeção é sempre o 'preço'.",score:1},{text:"Temos mapeadas as 3 principais objeções (preço, tempo, concorrente).",score:2},{text:"Temos um playbook de objeções, com respostas e argumentos para cada uma delas.",score:3}]},
+            {category:"5/7 - Fechamento e Negociação",question:"O time está preparado para lidar com essas objeções com confiança e técnica?",answers:[{text:"Não, o time fica sem resposta ou apela direto para o desconto.",score:0},{text:"Alguns vendedores lidam bem, outros ainda têm muita dificuldade.",score:1},{text:"Sim, recebem treinamento sobre como contornar as principais objeções.",score:2},{text:"Sim, fazemos simulações (role plays) e treinamentos contínuos para aprimorar.",score:3}]},
+            {category:"5/7 - Fechamento e Negociação",question:"O vendedor tem autonomia para negociar preços e condições?",answers:[{text:"Nenhuma, tudo precisa ser aprovado pelo gestor ou dono.",score:0},{text:"Têm uma margem mínima de desconto, mas pouca flexibilidade.",score:1},{text:"Sim, têm uma alçada de negociação clara para condições e preços.",score:2},{text:"Sim, e são incentivados a criar propostas de valor que vão além do preço.",score:3}]},
+            {category:"5/7 - Fechamento e Negociação",question:"Qual é a taxa média de conversão de propostas enviadas para contratos fechados?",answers:[{text:"Não medimos essa taxa.",score:0},{text:"Temos uma ideia geral, mas não é um número preciso.",score:1},{text:"Sim, medimos a taxa de conversão geral das propostas.",score:2},{text:"Sim, medimos por vendedor e analisamos os motivos de perda para melhorar.",score:3}]},
+            {category:"6/7 - Pós-venda e Retenção",question:"Há um processo estruturado de acompanhamento após a venda?",answers:[{text:"Não, a relação termina após o pagamento.",score:0},{text:"Apenas mandamos uma mensagem de agradecimento.",score:1},{text:"Sim, temos um processo de onboarding ou acompanhamento inicial.",score:2},{text:"Sim, temos um programa de Sucesso do Cliente (CS) para garantir o valor.",score:3}]},
+            {category:"6/7 - Pós-venda e Retenção",question:"Como a empresa mede a satisfação e fidelização dos clientes?",answers:[{text:"Não medimos formalmente.",score:0},{text:"Perguntamos informalmente ao cliente se está tudo bem.",score:1},{text:"Enviamos pesquisas de satisfação periodicamente (CSAT, NPS).",score:2},{text:"Medimos o NPS e usamos os feedbacks para melhorar processos e produtos.",score:3}]},
+            {category:"6/7 - Pós-venda e Retenção",question:"Existem ações de recompra, indicações ou programas de fidelidade?",answers:[{text:"Nenhuma.",score:0},{text:"Às vezes pedimos indicações, mas sem um programa definido.",score:1},{text:"Temos ações pontuais para incentivar a recompra ou o upsell.",score:2},{text:"Temos programas de fidelidade e de indicação estruturados com benefícios claros.",score:3}]},
+            {category:"6/7 - Pós-venda e Retenção",question:"Você considera que o cliente é bem cuidado depois que compra?",answers:[{text:"Francamente, é um dos nossos maiores pontos fracos.",score:0},{text:"Oferecemos suporte apenas quando o cliente nos procura.",score:1},{text:"Sim, temos canais de suporte e um bom atendimento reativo.",score:2},{text:"Sim, somos proativos em ajudar o cliente a ter sucesso com nossa solução.",score:3}]},
+            {category:"6/7 - Pós-venda e Retenção",question:"O pós-venda gera novas oportunidades de negócio de forma consistente?",answers:[{text:"Não, raramente acontece.",score:0},{text:"Às vezes um cliente satisfeito indica outro, mas é esporádico.",score:1},{text:"Sim, nosso pós-venda consegue gerar algumas recompras (upsell).",score:2},{text:"Sim, é uma fonte estratégica e previsível de novas receitas.",score:3}]},
+            {category:"7/7 - Liderança e Cultura Comercial",question:"O time de vendas tem reuniões regulares de alinhamento e acompanhamento?",answers:[{text:"Não temos reuniões de equipe.",score:0},{text:"Fazemos reuniões apenas para 'apagar incêndios' ou cobrar resultados.",score:1},{text:"Sim, temos reuniões semanais de alinhamento e planejamento.",score:2},{text:"Sim, temos rituais diários (dailys) e semanais focados em performance e estratégia.",score:3}]},
+            {category:"7/7 - Liderança e Cultura Comercial",question:"Há um líder comercial que inspira, cobra e desenvolve a equipe?",answers:[{text:"Não há um líder comercial definido, o dono assume esse papel.",score:0},{text:"Temos um 'chefe' que apenas cobra resultados, mas não desenvolve a equipe.",score:1},{text:"Sim, temos um gerente que acompanha os resultados e orienta o time.",score:2},{text:"Sim, temos um líder que é mentor, inspira e é focado em desenvolver as competências do time.",score:3}]},
+            {category:"7/7 - Liderança e Cultura Comercial",question:"Como é feita a gestão de performance e reconhecimento dos vendedores?",answers:[{text:"Não há, a única gestão é a cobrança por resultados.",score:0},{text:"O reconhecimento é apenas a comissão paga no final do mês.",score:1},{text:"Temos um sistema de comissionamento claro e bônus por metas batidas.",score:2},{text:"Além da comissão, temos programas de reconhecimento, gamificação e planos de carreira.",score:3}]},
+            {category:"7/7 - Liderança e Cultura Comercial",question:"O clima interno favorece o aprendizado e a troca de boas práticas?",answers:[{text:"Não, o clima é de competição individualista e até predatória.",score:0},{text:"Cada um trabalha de forma isolada, não há muita troca.",score:1},{text:"Sim, há um bom relacionamento e as pessoas se ajudam.",score:2},{text:"Sim, incentivamos ativamente a troca de boas práticas e o aprendizado conjunto.",score:3}]},
+            {category:"7/7 - Liderança e Cultura Comercial",question:"Qual é o maior desafio hoje na liderança comercial da sua empresa?",answers:[{text:"Apagar incêndios e garantir o faturamento mínimo para fechar o mês.",score:0},{text:"Fazer a equipe seguir o processo e ser mais disciplinada.",score:1},{text:"Manter a equipe motivada e batendo as metas de forma consistente.",score:2},{text:"Inovar e encontrar novas alavancas de crescimento para escalar os resultados.",score:3}]}
+        ];
+
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const endScreen = document.getElementById('end-screen');
+        const startBtn = document.getElementById('start-btn');
+        const backBtn = document.getElementById('back-btn');
+        const questionContent = document.getElementById('question-content');
+        const progressBar = document.getElementById('progress-bar');
+        
+        let currentQuestionIndex = 0;
+        let userScore = 0;
+        let userData = {};
+        let answerScores = [];
+
+        startBtn.addEventListener('click', startQuiz);
+        backBtn.addEventListener('click', goBack);
+
+        function startQuiz() {
+            const userName = document.getElementById('user-name').value;
+            const userEmail = document.getElementById('user-email').value;
+            const userWhatsapp = document.getElementById('user-whatsapp').value;
+            if (userName.trim() === '' || userEmail.trim() === '' || userWhatsapp.trim() === '') {
+                alert('Por favor, preencha todos os campos para começar.');
+                return;
+            }
+            userData = { name: userName, email: userEmail, whatsapp: userWhatsapp };
+            startScreen.classList.remove('active');
+            quizScreen.classList.add('active');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            backBtn.classList.toggle('hidden', currentQuestionIndex === 0);
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionContent.innerHTML = '';
+            const questionWrapper = document.createElement('div');
+            questionWrapper.className = 'question-wrapper';
+            questionWrapper.innerHTML = `
+                <p id="question-category">${currentQuestion.category}</p>
+                <h2 id="question-text">${currentQuestion.question}</h2>
+                <div id="answers-container"></div>`;
+            const answersContainer = questionWrapper.querySelector('#answers-container');
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.className = 'answer-btn';
+                button.innerText = answer.text;
+                button.addEventListener('click', () => selectAnswer(answer.score));
+                answersContainer.appendChild(button);
+            });
+            questionContent.appendChild(questionWrapper);
+            updateProgressBar();
+        }
+
+        function selectAnswer(score) {
+            userScore += score;
+            answerScores[currentQuestionIndex] = score;
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                showQuestion();
+            } else {
+                showEndScreen();
+            }
+        }
+        
+        function goBack() {
+            if (currentQuestionIndex === 0) return;
+            currentQuestionIndex--;
+            userScore -= answerScores[currentQuestionIndex];
+            answerScores.pop();
+            showQuestion();
+        }
+        
+        function updateProgressBar() {
+            const progressPercentage = (currentQuestionIndex / quizData.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+        
+        function showEndScreen() {
+            quizScreen.classList.remove('active');
+            endScreen.classList.add('active');
+            console.log('Quiz Finalizado!', { ...userData, score: userScore });
+        }
+    </script>
+</body>
+</html>
